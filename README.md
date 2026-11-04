@@ -36,142 +36,32 @@ Again just making minor change in the README file to generate build 2 in jenkins
 # Deliverable 4 - Automating CI/CD Pipeline
 
 ## 1. Description of CI/CD Pipeline
+This project uses a fully automated CI/CD pipeline implemented via **GitHub Actions**. 
+- **Trigger:** The pipeline triggers automatically upon a push to the `main` branch or when a Pull Request is merged.
+- **Build & Test:** It checks out the code, builds a Docker image, and runs a simple container test to ensure the application starts correctly.
+- **Push:** It authenticates with Docker Hub and pushes the latest image.
+- **Deploy:** It connects to an AWS EC2 instance via SSH, pulls the newly built image, and restarts the application container.
 
-Paw Track System uses GitHub Actions to automate the Continuous Integration and Continuous Deployment (CI/CD) process.
-
-The workflow is defined in:
-
-`.github/workflows/ci-cd.yml`
-
-The pipeline automates Docker image building, container testing, and publishing images to Docker Hub.
-
-### Pipeline Triggers
-
-The workflow supports the following events:
-
-1. **Push:** Automatically triggers when code is pushed to the main branch.
-2. **Pull Request:** Runs when a pull request is opened, updated, or reopened against the main branch.
-3. **Merged Pull Request:** Merging a pull request into main triggers the push event.
-4. **Manual Execution:** Supports manually running the workflow through GitHub Actions.
-
-### Pipeline Stages
-
-1. **Checkout:** Retrieves the latest source code from GitHub.
-2. **Build:** Builds separate Docker images for the frontend and backend.
-3. **Test:** Starts both containers and checks whether the frontend and backend respond successfully.
-4. **Docker Hub Login:** Authenticates using GitHub repository secrets.
-5. **Push:** Publishes both Docker images to Docker Hub.
-
-### Docker Hub Repositories
-
-- Frontend: `fasiha21/pawtrack-frontend`
-- Backend: `fasiha21/pawtrack-backend`
-
-Images are published with two tags:
-
-- `version4`
-- GitHub commit SHA
-
-### Security
-
-Docker Hub credentials are stored securely in GitHub Actions repository secrets:
-
-- `DOCKERHUB_USERNAME`
-- `DOCKERHUB_TOKEN`
-
-Credentials are not hardcoded into the workflow file.
-
-## 2. Instructions to Run and Deploy the Application
-
+## 2. Instructions to Run and Deploy the App
 ### Prerequisites
+You need Docker installed on your local machine.
+### Local Run
+1. Build the Docker image: 
+   `docker build -t my-app .`
+2. Run the container: 
+   `docker run -d -p 80:80 my-app`
 
-- Git
-- Docker Desktop
-- Docker Compose
-- GitHub account
-- Docker Hub account
-
-### A. Run Locally Using Docker Compose
-
-Clone the repository:
-
-```bash
-git clone https://github.com/Fasiha-Tariq/Paw_Track_System-.git
-```
-
-Navigate to the project directory:
-
-```bash
-cd Paw_Track_System-
-```
-
-Build and start the application:
-
-```bash
-docker compose up --build -d
-```
-
-Check running containers:
-
-```bash
-docker ps
-```
-
-Open the application:
-
-- Frontend: http://localhost
-- Backend: http://localhost:8080/index.js
-
-Stop the application:
-
-```bash
-docker compose down
-```
-
-### B. Pull Docker Images from Docker Hub
-
-Pull the frontend image:
-
-```bash
-docker pull fasiha21/pawtrack-frontend:version4
-
-```
-
-Pull the backend image:
-
-```bash
-docker pull fasiha21/pawtrack-backend:version4
-```
-
-Verify downloaded images:
-
-```bash
-docker images
-```
-
-### C. Automated Deployment to Docker Hub
-
-Whenever code is pushed to the main branch:
-
-1. GitHub Actions automatically starts the CI/CD workflow.
-2. Docker images are built.
-3. Both containers are tested.
-4. GitHub Actions authenticates with Docker Hub.
-5. Updated frontend and backend images are pushed to Docker Hub.
-
-The latest images are then available in the respective Docker Hub repositories.
-
----
+### Automated Deployment
+To deploy the application automatically via GitHub Actions, configure the following Secrets in your GitHub repository settings (`Settings > Secrets and variables > Actions`):
+- `DOCKERHUB_USERNAME`: Your Docker Hub username.
+- `DOCKERHUB_TOKEN`: Your Docker Hub access token.
+- `EC2_HOST`: Your AWS EC2 instance public IP.
+- `EC2_USER`: The SSH user (e.g., `ubuntu`).
+- `EC2_SSH_KEY`: The private key (.pem content) to access the EC2 instance.
 
 ## 3. Changelog
-
-- Created GitHub Actions CI/CD workflow.
-- Added multiple workflow trigger events.
-- Automated frontend Docker image building.
-- Automated backend Docker image building.
-- Added frontend container testing.
-- Added backend container testing.
-- Integrated Docker Hub authentication using GitHub Secrets.
-- Automated pushing of Docker images to Docker Hub.
-- Added `version4` and Git commit SHA image tags.
-- Updated project documentation with CI/CD instructions.
+### [v1.0.0] - 2026-11-04
+- **Added:** GitHub Actions CI/CD workflow (`.github/workflows/ci-cd.yml`).
+- **Added:** Automated deployment to AWS EC2 via SSH.
+- **Added:** Automated build and push to Docker Hub.
+- **Updated:** README.md with complete pipeline description, deployment instructions, and changelog.
