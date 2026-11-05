@@ -76,7 +76,7 @@ To deploy the application automatically via GitHub Actions, configure the follow
 
 ## 3. Changelog
 
-### [v1.0.0] - 2026-11-04
+### 2026-11-04
 
 - **Added:** GitHub Actions CI/CD workflow (`.github/workflows/ci-cd.yml`).
 - **Added:** Automated deployment to AWS EC2 via SSH.
